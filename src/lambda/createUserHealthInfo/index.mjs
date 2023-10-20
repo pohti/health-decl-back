@@ -14,6 +14,23 @@ const validateBody = body => {
     if (!body || Object.keys(body).length === 0) throw new BadRequestError()
 }
 
+const insertUser = async body => {
+    
+    let userData
+    try {
+        const newUser = User(body)
+        await newUser.validate()
+        userData = await newUser.save()
+    }
+    catch (error) {
+        throw new BadRequestError('Failed to create user')
+    }
+    
+    console.log('response', userData.toJSON())
+    
+    return userData.toJSON()
+}
+
 export const handler = async (event) => {
     console.log('event', JSON.stringify(event))
     // const queryParams = event.queryStringParameters
@@ -35,15 +52,13 @@ export const handler = async (event) => {
         validateBody(body)
         
         await mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
-        const newUser = User(body)
-        const mongoResponse = await newUser.save()
-        console.log('response', mongoResponse.toJSON())
+        const userData = await insertUser(body)
 
         // IMPLEMENTATION HERE
         response = {
             ...response,
             statusCode: 200,
-            body: JSON.stringify(mongoResponse.toJSON()),
+            body: JSON.stringify(userData),
         };
     }
     catch (eInfo) {
@@ -55,6 +70,10 @@ export const handler = async (event) => {
             response.statusCode         = 400
             errorResponse.code          = 'BAD_REQUEST'
             errorResponse['message']    = eInfo.message
+        } else if (eInfo.code === 11000 || eInfo.code === 11001) {
+            response.statusCode         = 400
+            errorResponse.code          = 'BAD_REQUEST'
+            errorResponse['message']    = 'Duplicate field error'
         } else if (eInfo instanceof UnauthorizedError) {
             response.statusCode         = 401
             errorResponse.code          = 'UNAUTHORIZED'
@@ -68,8 +87,7 @@ export const handler = async (event) => {
         } else if (eInfo instanceof TimeoutError) {
             response.statusCode     = 406
             errorResponse.code      = 'Timeout'
-        }
-        else {
+        } else {
             response.statusCode     = 500
             errorResponse.code      = 'INTERNAL_SERVER_ERROR'
         }
