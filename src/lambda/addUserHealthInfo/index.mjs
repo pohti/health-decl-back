@@ -9,38 +9,34 @@ class ForbiddenError extends Error {}           // 403 | ACCESS_DENIED
 class NotFoundError extends Error {}            // 404 | NOT_FOUND
 class TimeoutError extends Error {}             // 406 | 
 
-
-const validateBody = body => {
+const extractParams = body => {
     if (!body || Object.keys(body).length === 0) throw new BadRequestError()
-}
 
-const insertUser = async body => {
-    
     const {
         fullname,
         nric,
-        phone,
-        healthDetails,
+        healthDetails
     } = body
 
-    let userData
-    try {
-        const newUser = User({
-            fullname,
-            nric,
-            phone,
-            healthDeclarations: [ healthDetails ]
-        })
-        await newUser.validate()
-        userData = await newUser.save()
-    }
-    catch (error) {
-        throw new BadRequestError('Failed to create user')
-    }
+    if (!fullname && !nric) throw new BadRequestError('Missing both fullname and nric')
+    if (!healthDetails) throw new BadRequestError('Missing health details')
+    let params = {}
+    if (fullname) params['fullname'] = fullname
+    if (nric) params['nric'] = nric
+    return { params, healthDetails }
+}
+
+const addHealthInfo = async (params, healthDetails) => {
+    console.log('update params', { params, healthDetails })
+    const mongoResponse = await User.updateOne(
+        params,
+        { $push: { healthDeclarations: healthDetails } }
+    )
     
-    console.log('response', userData.toJSON())
+
+    console.log('mongoResponse', mongoResponse)
+    if (!mongoResponse.acknowledged) throw new Error('Failed to update')
     
-    return userData.toJSON()
 }
 
 export const handler = async (event) => {
@@ -48,8 +44,8 @@ export const handler = async (event) => {
     // const queryParams = event.queryStringParameters
     // const pathParams = event.pathParameters
     const body = JSON.parse(event.body)
-    console.log('body', body)
-
+    // console.log('body', body)
+    
     let response = {
         statusCode: 200,
         headers: {
@@ -61,16 +57,16 @@ export const handler = async (event) => {
     }
 
     try {
-        validateBody(body)
-        
+        const { params, healthDetails } = extractParams(body)
+
         await mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
-        const userData = await insertUser(body)
+        await addHealthInfo(params, healthDetails)
 
         // IMPLEMENTATION HERE
         response = {
             ...response,
             statusCode: 200,
-            body: JSON.stringify(userData),
+            body: JSON.stringify('Updated successfully!'),
         };
     }
     catch (eInfo) {
@@ -82,10 +78,6 @@ export const handler = async (event) => {
             response.statusCode         = 400
             errorResponse.code          = 'BAD_REQUEST'
             errorResponse['message']    = eInfo.message
-        } else if (eInfo.code === 11000 || eInfo.code === 11001) {
-            response.statusCode         = 400
-            errorResponse.code          = 'BAD_REQUEST'
-            errorResponse['message']    = 'Duplicate field error'
         } else if (eInfo instanceof UnauthorizedError) {
             response.statusCode         = 401
             errorResponse.code          = 'UNAUTHORIZED'
@@ -99,7 +91,8 @@ export const handler = async (event) => {
         } else if (eInfo instanceof TimeoutError) {
             response.statusCode     = 406
             errorResponse.code      = 'Timeout'
-        } else {
+        }
+        else {
             response.statusCode     = 500
             errorResponse.code      = 'INTERNAL_SERVER_ERROR'
         }

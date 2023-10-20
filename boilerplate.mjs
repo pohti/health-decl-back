@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-// import {} from 'entriworx/models.mjs'
+// import { User } from './models.mjs'
 
 const MONGODB_URI = process.env.MONGODB_URI
 

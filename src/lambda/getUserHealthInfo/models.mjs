@@ -26,6 +26,7 @@ const HealthDetailsSchema = new Schema({
         default: null,
     },
     contactWithin14Days: { type: Boolean, default: false, required: true },
+    createdDateTime: { type: Date, default: new Date() }
 })
 
 const UserSchema = new Schema({
@@ -51,11 +52,7 @@ const UserSchema = new Schema({
         trim: true // Trim white spaces at the edges
       },
 
-    healthDetails: {
-        type: HealthDetailsSchema,
-        default: null,
-    },
-
+    healthDeclarations: [ { type: HealthDetailsSchema } ],
     createdDateTime: { 
         type: Date,
         required: true,
