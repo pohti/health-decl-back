@@ -2,3 +2,15 @@ node_modules
 node_modules/*
 
 .env
+export_env.sh
+
+lambda_zip
+lambda_zip/*
+
+.terraform
+.terraform/*
+terraform.tfstate
+terraform.tfstate.backup
+
+aws
+aws/*

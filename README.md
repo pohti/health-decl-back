@@ -1,6 +1,8 @@
 # Health Declaration App - Backend
 
 ## Tech stack
-- Database: MongoDB Atlas
+- Database: MongoDB
 - Programming Language: NodeJS
-- Libraries: Mongoose, AWS Lambda
+- Libraries: Mongoose
+- IaC: Terraform
+- Cloud Services: AWS, MongoDB Atlas
