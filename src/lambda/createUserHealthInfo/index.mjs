@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { User } from 'models.mjs'
+import { User } from './models.mjs'
 
 const MONGODB_URI = process.env.MONGODB_URI
 

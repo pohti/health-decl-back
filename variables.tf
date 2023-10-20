@@ -8,7 +8,6 @@ variable "MONGODB_PW" {
   default = ""
 }
 
-
 variable "MONGOOSE_LAYER_ARN" {
   type    = string
   default = "arn:aws:lambda:ap-southeast-1:609256976967:layer:mongoose:1"
