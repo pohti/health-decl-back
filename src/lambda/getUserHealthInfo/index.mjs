@@ -9,11 +9,23 @@ class ForbiddenError extends Error {}           // 403 | ACCESS_DENIED
 class NotFoundError extends Error {}            // 404 | NOT_FOUND
 class TimeoutError extends Error {}             // 406 | 
 
-
+const extractParams = queryParams => {
+    
+    if (!queryParams) throw new BadRequestError("Missing params")
+    const { fullname, nric } = queryParams
+    
+    if (!fullname && !nric) throw new BadRequestError("Missing params")
+    
+    let params = {}
+    if (fullname) params['fullname'] = fullname
+    if (nric) params['nric'] = nric
+    
+    return params
+}
 
 export const handler = async (event) => {
     console.log('event', JSON.stringify(event))
-    // const queryParams = event.queryStringParameters
+    const queryParams = event.queryStringParameters
     // const pathParams = event.pathParameters
     // const body = JSON.parse(event.body)
 
@@ -28,13 +40,16 @@ export const handler = async (event) => {
     }
 
     try {
+        const params = extractParams(queryParams)
+
         await mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
 
+        const userData = await User.findOne({ ...params }, { _id: false })
         // IMPLEMENTATION HERE
         response = {
             ...response,
             statusCode: 200,
-            body: JSON.stringify('Hello from Lambda!'),
+            body: JSON.stringify(userData),
         };
     }
     catch (eInfo) {

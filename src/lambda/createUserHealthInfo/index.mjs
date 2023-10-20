@@ -10,12 +10,16 @@ class NotFoundError extends Error {}            // 404 | NOT_FOUND
 class TimeoutError extends Error {}             // 406 | 
 
 
+const validateBody = body => {
+    if (!body || Object.keys(body).length === 0) throw new BadRequestError()
+}
 
 export const handler = async (event) => {
     console.log('event', JSON.stringify(event))
     // const queryParams = event.queryStringParameters
     // const pathParams = event.pathParameters
-    // const body = JSON.parse(event.body)
+    const body = JSON.parse(event.body)
+    console.log('body', body)
 
     let response = {
         statusCode: 200,
@@ -28,13 +32,18 @@ export const handler = async (event) => {
     }
 
     try {
+        validateBody(body)
+        
         await mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
+        const newUser = User(body)
+        const mongoResponse = await newUser.save()
+        console.log('response', mongoResponse.toJSON())
 
         // IMPLEMENTATION HERE
         response = {
             ...response,
             statusCode: 200,
-            body: JSON.stringify('Hello from Lambda!'),
+            body: JSON.stringify(mongoResponse.toJSON()),
         };
     }
     catch (eInfo) {

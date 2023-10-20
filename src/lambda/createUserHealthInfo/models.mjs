@@ -25,23 +25,24 @@ const HealthDetailsSchema = new Schema({
         required: true,
         default: null,
     },
-    contactWithin14Days: { type: Boolean, required: true },
+    contactWithin14Days: { type: Boolean, default: false, required: true },
 })
 
 const UserSchema = new Schema({
-    fullname: { type: String },
-    nric: { type: String },
-    phone: { 
+    fullname: { type: String, trim: true, required: true },
+    nric: { type: String, trim: true, required: true },
+    phone: {
         type: String,
         validate: {
-            validator: function(value) {
-              // Regular expression to match strings containing only '+' and numbers
-              const phoneRegex = /^[+\d]+$/;
-              return phoneRegex.test(value);
-            },
-            message: props => `${props.value} is not a valid phone number.`
-        }
-    },
+          validator: function(value) {
+            // Regular expression to match strings containing '+' and digits, allowing spaces
+            const phoneRegex = /^[+\d\s]+$/;
+            return phoneRegex.test(value);
+          },
+          message: props => `${props.value} is not a valid phone number.`
+        },
+        trim: true // Trim white spaces at the edges
+      },
 
     healthDetails: {
         type: HealthDetailsSchema,

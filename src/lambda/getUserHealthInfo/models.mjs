@@ -1,16 +1,16 @@
 import mongoose, { Schema } from 'mongoose'
 
 const SymptonsSchema = new Schema({
-    cough: Boolean,
-    smellAndTasteImpairment: Boolean,
-    fever: Boolean,
-    breathingDifficulties: Boolean,
-    bodyAches: Boolean,
-    headAches: Boolean,
-    fatigue: Boolean,
-    soreThroat: Boolean,
-    diarrhea: Boolean,
-    runnyNose: Boolean
+    cough: { type: Boolean, default: false },
+    smellAndTasteImpairment: { type: Boolean, default: false },
+    fever: { type: Boolean, default: false },
+    breathingDifficulties: { type: Boolean, default: false },
+    bodyAches: { type: Boolean, default: false },
+    headAches: { type: Boolean, default: false },
+    fatigue: { type: Boolean, default: false },
+    soreThroat: { type: Boolean, default: false },
+    diarrhea: { type: Boolean, default: false },
+    runnyNose: { type: Boolean, default: false }
 })
 
 const HealthDetailsSchema = new Schema({
@@ -25,31 +25,41 @@ const HealthDetailsSchema = new Schema({
         required: true,
         default: null,
     },
-    contactWithin14Days: { type: Boolean, required: true },
+    contactWithin14Days: { type: Boolean, default: false, required: true },
 })
 
 const UserSchema = new Schema({
-    fullname: { type: String },
-    nric: { type: String },
-    phone: { 
+    fullname: { type: String, trim: true, required: true },
+    nric: { type: String, trim: true, required: true },
+    phone: {
         type: String,
         validate: {
-            validator: function(value) {
-              // Regular expression to match strings containing only '+' and numbers
-              const phoneRegex = /^[+\d]+$/;
-              return phoneRegex.test(value);
-            },
-            message: props => `${props.value} is not a valid phone number.`
-        }
-    },
+          validator: function(value) {
+            // Regular expression to match strings containing '+' and digits, allowing spaces
+            const phoneRegex = /^[+\d\s]+$/;
+            return phoneRegex.test(value);
+          },
+          message: props => `${props.value} is not a valid phone number.`
+        },
+        trim: true // Trim white spaces at the edges
+      },
 
     healthDetails: {
         type: HealthDetailsSchema,
         default: null,
     },
 
-    createdDateTime: { type: Date, required: true },
-    lastModifiedDateTime: { type: Date, default: new Date() },
+    createdDateTime: { 
+        type: Date,
+        required: true,
+        default: function() {
+            return this.isNew ? new Date() : undefined;
+        }
+    },
+    lastModifiedDateTime: { 
+        type: Date, 
+        default: new Date() 
+    },
 }, { collection: 'users' })
 UserSchema.index({ fullname: 1 })
 UserSchema.index({ nric: 1 }, { unique: true })
