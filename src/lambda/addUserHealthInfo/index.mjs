@@ -36,6 +36,8 @@ const addHealthInfo = async (params, healthDetails) => {
 
     console.log('mongoResponse', mongoResponse)
     if (!mongoResponse.acknowledged) throw new Error('Failed to update')
+    if (mongoResponse.modifiedCount === 0) throw new BadRequestError('No matching records found!')
+    
     
 }
 
