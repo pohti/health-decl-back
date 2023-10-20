@@ -1,8 +1,3 @@
-# variable "MONGODB_URI" {
-#   type    = string
-#   default = ""
-# }
-
 variable "MONGODB_ACC" {
   type    = string
   default = ""
