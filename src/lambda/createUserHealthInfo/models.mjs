@@ -26,7 +26,11 @@ const HealthDetailsSchema = new Schema({
         default: null,
     },
     contactWithin14Days: { type: Boolean, default: false, required: true },
-    createdDateTime: { type: Date, default: new Date() }
+}, {
+    timestamps: {
+        createdAt: 'createdDateTime',
+        updatedAt: 'lastModifiedDateTime'
+    }
 })
 
 const UserSchema = new Schema({
@@ -53,18 +57,13 @@ const UserSchema = new Schema({
       },
 
     healthDeclarations: [ { type: HealthDetailsSchema } ],
-    createdDateTime: { 
-        type: Date,
-        required: true,
-        default: function() {
-            return this.isNew ? new Date() : undefined;
-        }
-    },
-    lastModifiedDateTime: { 
-        type: Date, 
-        default: new Date() 
-    },
-}, { collection: 'users' })
+}, { 
+    collection: 'users',
+    timestamps: {
+        createdAt: 'createdDateTime',
+        updatedAt: 'lastModifiedDateTime'
+    }
+})
 UserSchema.index({ fullname: 1 })
 UserSchema.index({ nric: 1 }, { unique: true })
 

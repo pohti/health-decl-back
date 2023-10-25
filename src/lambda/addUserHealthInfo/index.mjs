@@ -64,7 +64,6 @@ export const handler = async (event) => {
         await mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
         await addHealthInfo(params, healthDetails)
 
-        // IMPLEMENTATION HERE
         response = {
             ...response,
             statusCode: 200,
