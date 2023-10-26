@@ -1,0 +1,2 @@
+const extractParams = require('./utils');
+

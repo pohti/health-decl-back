@@ -1,5 +1,7 @@
 node_modules
 node_modules/*
+tests/node_modules
+tests/node_modules/*
 
 .env
 export_env.sh
@@ -19,3 +21,4 @@ aws/*
 lambda_layers/zip/
 
 lambda_layers/*/nodejs/node_modules
+
