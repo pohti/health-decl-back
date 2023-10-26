@@ -10,9 +10,15 @@
 ## Notes
 Since this backend is cloud based (in AWS and MongoDB Atlas), you will not be able to run this in local environment.
 
-However, if you have the AWS cli configured and MongoDB credentials, you should be able to deploy this repo using terraform.
+However, if you have the AWS cli configured and MongoDB credentials, you should be able to deploy this repo using `terraform`.
 
-Steps:
+
+> Find out how to install `terraform` from [here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+
+
+
+## Steps to Deploy
 
 - Setup AWS CLI
 - Setup database admin access on your desired `MongoDB Atlas` cluster
