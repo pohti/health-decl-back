@@ -23,7 +23,8 @@ resource "aws_lambda_function" "addUserHealthInfo" {
   }
 
   layers = [
-    var.MONGOOSE_LAYER_ARN
+    aws_lambda_layer_version.hda-models-lambda-layer.arn,
+    aws_lambda_layer_version.mongoose-lambda-layer.arn
   ]
 }
 

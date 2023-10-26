@@ -14,3 +14,8 @@ terraform.tfstate.backup
 
 aws
 aws/*
+
+*/*/lambda_zip/*.zip
+lambda_layers/zip/
+
+lambda_layers/*/nodejs/node_modules

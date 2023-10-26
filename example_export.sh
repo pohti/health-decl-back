@@ -1,0 +1,2 @@
+export TF_VAR_MONGODB_ACC=
+export TF_VAR_MONGODB_PW=
