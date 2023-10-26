@@ -30,13 +30,14 @@ const addHealthInfo = async (params, healthDetails) => {
     console.log('update params', { params, healthDetails })
     const mongoResponse = await User.updateOne(
         params,
-        { $push: { healthDeclarations: healthDetails } }
+        { $push: { healthDeclarations: healthDetails } },
+        { upsert: true }
     )
     
 
     console.log('mongoResponse', mongoResponse)
     if (!mongoResponse.acknowledged) throw new Error('Failed to update')
-    if (mongoResponse.modifiedCount === 0) throw new BadRequestError('No matching records found!')
+    if (mongoResponse.modifiedCount !== 1 && mongoResponse.upsertedCount !== 1) throw new Error('Failed to create/update!')
     
     
 }
