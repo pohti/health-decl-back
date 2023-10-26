@@ -28,6 +28,17 @@ resource "aws_lambda_function" "getUserHealthInfo" {
   ]
 }
 
+# ----------------------------------------------------------------------------------------------------
+# Allow API Gateway to invoke this lambda
+resource "aws_lambda_permission" "allowInvoke-getUserHealthInfo" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.getUserHealthInfo.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.hda-api.execution_arn}/*/*"
+}
+
+
 # output "lambda_function_arn" {
 #   value = aws_lambda_function.example_lambda.arn
 # }

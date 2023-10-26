@@ -32,7 +32,7 @@ paths:
       - api_key: []
       x-amazon-apigateway-integration:
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:609256976967:function:hda-getUserHealthInfo/invocations"
+        uri: "${getUserHealthInfo_uri}"
         responses:
           default:
             statusCode: "200"
@@ -59,7 +59,7 @@ paths:
       - api_key: []
       x-amazon-apigateway-integration:
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:609256976967:function:hda-addUserHealthInfo/invocations"
+        uri: "${addUserHealthInfo_uri}"
         responses:
           default:
             statusCode: "200"
@@ -101,6 +101,7 @@ paths:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
         type: "mock"
+
 components:
   schemas:
     Empty:
