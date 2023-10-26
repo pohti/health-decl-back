@@ -15,6 +15,7 @@ const extractParams = body => {
     const {
         fullname,
         nric,
+        phone,
         healthDetails
     } = body
 
@@ -23,6 +24,7 @@ const extractParams = body => {
     let params = {}
     if (fullname) params['fullname'] = fullname
     if (nric) params['nric'] = nric
+    if (phone) params['phone'] = phone
     return { params, healthDetails }
 }
 
