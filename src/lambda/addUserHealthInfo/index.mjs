@@ -24,15 +24,18 @@ const extractParams = body => {
     let params = {}
     if (fullname) params['fullname'] = fullname
     if (nric) params['nric'] = nric
-    if (phone) params['phone'] = phone
-    return { params, healthDetails }
+
+    let update = {}
+    if (phone) update['$set'] = { phone } 
+    if (healthDetails) update = { ...update, $push: { healthDeclarations: healthDetails }}
+    return { params, update }
 }
 
-const addHealthInfo = async (params, healthDetails) => {
-    console.log('update params', { params, healthDetails })
+const addHealthInfo = async (params, update) => {
+    console.log('update params', { params, update })
     const mongoResponse = await User.updateOne(
         params,
-        { $push: { healthDeclarations: healthDetails } },
+        update,
         { upsert: true }
     )
     
@@ -62,10 +65,10 @@ export const handler = async (event) => {
     }
 
     try {
-        const { params, healthDetails } = extractParams(body)
+        const { params, update } = extractParams(body)
 
         await mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
-        await addHealthInfo(params, healthDetails)
+        await addHealthInfo(params, update)
 
         response = {
             ...response,
