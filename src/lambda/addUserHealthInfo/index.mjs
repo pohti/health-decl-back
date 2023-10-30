@@ -43,8 +43,6 @@ const addHealthInfo = async (params, update) => {
     console.log('mongoResponse', mongoResponse)
     if (!mongoResponse.acknowledged) throw new Error('Failed to update')
     if (mongoResponse.modifiedCount !== 1 && mongoResponse.upsertedCount !== 1) throw new Error('Failed to create/update!')
-    
-    
 }
 
 export const handler = async (event) => {

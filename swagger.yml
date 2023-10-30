@@ -3,10 +3,8 @@ info:
   title: "health-decleration-app"
   version: "2023-10-26T00:36:12Z"
 servers:
-- url: "https://052bs9gz53.execute-api.ap-southeast-1.amazonaws.com/{basePath}"
-  variables:
-    basePath:
-      default: "dev"
+- url: "https://sm7tgtc38h.execute-api.ap-southeast-1.amazonaws.com/dev"
+
       
 tags:
  - name: User Health Declaration
@@ -15,6 +13,20 @@ tags:
 paths:
   /users:
     get:
+      parameters:
+        - name: fullname
+          description: either fullname or nric needs to be provided
+          in: query
+          schema:
+            type: string
+            example: Alice Tan
+
+        - name: nric
+          description: either fullname or nric needs to be provided
+          in: query
+          schema:
+            type: string
+            example: S1234567M
       tags:
         - User Health Declaration
       responses:
@@ -27,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Empty"
+                $ref: "#/components/schemas/UserHealthData"
       security:
       - api_key: []
       x-amazon-apigateway-integration:
@@ -44,6 +56,8 @@ paths:
     post:
       tags:
         - User Health Declaration
+      requestBody:
+        $ref: '#/components/requestBodies/UserHealthData'
       responses:
         "200":
           description: "200 response"
@@ -54,7 +68,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Empty"
+                type: string
+                example: "Updated successfully!"
       security:
       - api_key: []
       x-amazon-apigateway-integration:
@@ -105,8 +120,77 @@ paths:
 components:
   schemas:
     Empty:
-      title: "Empty Schema"
-      type: "object"
+      type: object
+    HealthDeclaration:
+      type: object
+      properties:
+        temperature:
+          type: number
+          example: 36.3
+        symptons:
+          type: object
+          properties:
+            cough: 
+              type: boolean
+            smellAndTasteImpairment: 
+              type: boolean
+            fever: 
+              type: boolean
+            breathingDifficulties: 
+              type: boolean
+            bodyAches: 
+              type: boolean
+            headAches: 
+              type: boolean
+            fatigue: 
+              type: boolean
+            soreThroat: 
+              type: boolean
+            diarrhea: 
+              type: boolean
+            runnyNose: 
+              type: boolean
+        contactWithin14Days: 
+          type: boolean
+    UserHealthData:
+      type: object
+      properties:
+        fullname:
+          type: string
+          example: Alice Tan
+        nric:
+          type: string
+          example: S1234567M
+        phone:
+          type: string
+          example: "+65 12345678"
+        healthDeclarations:
+          type: array
+          items: 
+            $ref: '#/components/schemas/HealthDeclaration'
+    UserHealthDataRequestBody:
+      type: object
+      properties:
+        fullname:
+          type: string
+          example: Alice Tan
+        nric:
+          type: string
+          example: S1234567M
+        phone:
+          type: string
+          example: "+65 12345678"
+        healthDetails:
+            $ref: '#/components/schemas/HealthDeclaration'
+
+  requestBodies:
+    UserHealthData:
+      required: true
+      content: 
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserHealthDataRequestBody'
+
   securitySchemes:
     api_key:
       type: "apiKey"
